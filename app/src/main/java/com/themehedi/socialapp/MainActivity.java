@@ -419,6 +419,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void SendUserToMainActivity() {
 
+        finish();
         recreate();
         this.drawerLayout.closeDrawer(GravityCompat.START);
     }
@@ -473,7 +474,8 @@ public class MainActivity extends AppCompatActivity {
 
 
             case R.id.nav_home:
-                SendUserToMainActivity();
+                recreate();
+                this.drawerLayout.closeDrawer(GravityCompat.START);
                 break;
 
             case R.id.nav_post:

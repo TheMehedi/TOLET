@@ -401,7 +401,6 @@ public class PostActivity extends AppCompatActivity {
 
             if(ContextCompat.checkSelfPermission(PostActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
 
-                Toast.makeText(PostActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
                 ActivityCompat.requestPermissions(PostActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
             } else {
