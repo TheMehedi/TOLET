@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">TO-LET</string>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_pass_hint">Password</string>
+    <string name="confirm_pass_hint">Confirm Password</string>
+    <string name="register_btn_text">Register</string>
+    <string name="reg_login_btn_text">Already have a Account?</string>
+    <string name="creating_account_text">Please wait, Logging in..</string>
+    <string name="login_logo">login logo</string>
+    <string name="login">Login</string>
+    <string name="new_account_text">Need a new Account?</string>
+    <string name="or_login_with">or Login with</string>
+    <string name="username_text">Username:</string>
+    <string name="name_text">Name:</string>
+    <string name="country_text">Country:</string>
+    <string name="save_btn_text">Save</string>
+    <string name="update_status_text">Updating Account..</string>
+    <string name="post_text">Post Add</string>
+    <string name="default_web_client" translatable="false">901406079571-dhkuil8jpp2bg7pd6o4nbgdaj0dnj549.apps.googleusercontent.com</string>
+    <string name="welcome_screen_text">Welcome to TO-LET</string>
+    <string name="username">username</string>
+
+    <string-array name="names">
+
+        <item>Others</item>
+        <item>Apartment</item>
+        <item>Office</item>
+        <item>Mess</item>
+        <item>Hall</item>
+
+    </string-array>
+
+    <string-array name="category_names">
+
+
+        <item>All</item>
+        <item>Apartment</item>
+        <item>Office</item>
+        <item>Mess</item>
+        <item>Hall</item>
+        <item>Others</item>
+
+    </string-array>
+</resources>
