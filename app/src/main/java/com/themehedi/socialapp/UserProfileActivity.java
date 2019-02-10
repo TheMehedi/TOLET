@@ -92,7 +92,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void ProfileInfo() {
 
-        UserRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
+        UserRef.child(currentUserID).child("Profile").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

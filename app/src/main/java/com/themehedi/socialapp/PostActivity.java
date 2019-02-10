@@ -68,7 +68,7 @@ public class PostActivity extends AppCompatActivity {
 
     private StorageReference PostsImagesRef;
     private FirebaseAuth mAuth;
-    private DatabaseReference UserRef, PostsRef;
+    private DatabaseReference UserRef, PostsRef, UserPostRef;
 
     private Bitmap compressedImageFile;
 
@@ -107,7 +107,8 @@ public class PostActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         PostsImagesRef = FirebaseStorage.getInstance().getReference();
-        UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("Profile");
+        UserPostRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("UserPost");
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
 
 
@@ -232,6 +233,31 @@ public class PostActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
+
+
+                                UserPostRef.child("All").child(postRandomName + currentUserID).child("postimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+
+                                        }else{
+                                            Toast.makeText(PostActivity.this,"Problem occurred while saving post image!",Toast.LENGTH_SHORT) .show();
+                                        }
+                                    }
+                                });
+
+
+                                UserPostRef.child(record).child(postRandomName + currentUserID).child("postimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+
+                                        }else{
+                                            Toast.makeText(PostActivity.this,"Problem occurred while saving post image!",Toast.LENGTH_SHORT) .show();
+                                        }
+                                    }
+                                });
+
                             }
                         });
 
@@ -315,6 +341,53 @@ public class PostActivity extends AppCompatActivity {
                         });
 
 
+                        UserPostRef.child("All").child(postRandomName + currentUserID).setValue(postsMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+
+                                if(task.isSuccessful()){
+
+                                    SendUserToMainActivity();
+                                    Toast.makeText(PostActivity.this, "Post Updated!", Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                else{
+
+                                    String message = task.getException().getMessage();
+                                    Toast.makeText(PostActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                }
+
+
+                            }
+                        });
+
+
+                        UserPostRef.child(record).child(postRandomName + currentUserID).setValue(postsMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+
+                                if(task.isSuccessful()){
+
+                                    SendUserToMainActivity();
+                                    Toast.makeText(PostActivity.this, "Post Updated!", Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                else{
+
+                                    String message = task.getException().getMessage();
+                                    Toast.makeText(PostActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                }
+
+
+                            }
+                        });
+
+
+
                     }
 
                     else if((dataSnapshot.exists()) && (dataSnapshot.hasChild("fullname"))){
@@ -353,6 +426,54 @@ public class PostActivity extends AppCompatActivity {
 
 
                         PostsRef.child(record).child(postRandomName + currentUserID).setValue(postsMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+
+                                if(task.isSuccessful()){
+
+                                    SendUserToMainActivity();
+                                    Toast.makeText(PostActivity.this, "Post Updated!", Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                else{
+
+                                    String message = task.getException().getMessage();
+                                    Toast.makeText(PostActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                }
+
+
+                            }
+                        });
+
+
+
+                        UserPostRef.child("All").child(postRandomName + currentUserID).setValue(postsMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+
+                                if(task.isSuccessful()){
+
+                                    SendUserToMainActivity();
+                                    Toast.makeText(PostActivity.this, "Post Updated!", Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                else{
+
+                                    String message = task.getException().getMessage();
+                                    Toast.makeText(PostActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                }
+
+
+                            }
+                        });
+
+
+
+                        UserPostRef.child(record).child(postRandomName + currentUserID).setValue(postsMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
 
@@ -441,6 +562,7 @@ public class PostActivity extends AppCompatActivity {
     private void SendUserToMainActivity() {
 
         Intent mainIntent = new Intent(PostActivity.this,MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
         finish();
 

@@ -50,12 +50,12 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar mToolbar;
 
     private CircleImageView NavProfileImage;
-    private TextView NavProfileUserName;
+    private TextView NavProfileUserName, Message;
     private FloatingActionButton AddNewPostButton;
     private Button SearchBtn;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference UserRef, PostsRef;
+    private DatabaseReference UserRef, PostsRef, UserPostRef, SavedPostRef;
 
     private String currentUserID;
     private String record;
@@ -98,8 +98,11 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        UserPostRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("UserPost");
+        SavedPostRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("SavedPost");
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Posts").child("All");
         homeProgressbar = findViewById(R.id.home_progressbar);
+        Message = findViewById(R.id.message);
 
         SearchBtn = findViewById(R.id.search_btn);
         SearchBtn.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         NavProfileUserName = navView.findViewById(R.id.nav_user_full_name);
 
 
-        UserRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
+        UserRef.child(currentUserID).child("Profile").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -223,77 +226,104 @@ public class MainActivity extends AppCompatActivity {
 
     private void DisplayAllUsersPost(final DatabaseReference postsRef) {
 
-        homeProgressbar.setVisibility(View.VISIBLE);
 
-        FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>()
-                .setQuery(postsRef,Posts.class)
-                .build();
-
-
-
-
-
-        final FirebaseRecyclerAdapter<Posts, PostsViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
+        PostsRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onBindViewHolder(@NonNull final PostsViewHolder holder, int position, @NonNull Posts model) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                Drawable postBackground = getResources().getDrawable(R.drawable.post_background);
-                holder.itemView.setBackground(postBackground);
+                if(dataSnapshot.exists()){
 
-                final String PostKey = getRef(position).getKey();
-                final String CategoryKey = record;
+                    homeProgressbar.setVisibility(View.VISIBLE);
 
-                holder.username.setText(model.getFullname());
-                Picasso.with(MainActivity.this).load(model.getProfileimage()).placeholder(R.drawable.profile).into(holder.image);
-                holder.PostTime.setText(model.getTime());
-                holder.PostDate.setText(model.getDate());
-                holder.PostDescription.setText(model.getDescription());
-                Picasso.with(MainActivity.this).load(model.getPostimage()).into(holder.PostImage);
-
-                holder.SavePost.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>()
+                            .setQuery(postsRef,Posts.class)
+                            .build();
 
 
-                        int saveColor = getResources().getColor(R.color.colorPrimary);
 
-                        holder.SavePost.setText("Saved");
-                        holder.SavePost.setTextColor(saveColor);
 
-                    }
-                });
 
-                homeProgressbar.setVisibility(View.INVISIBLE);
+                    final FirebaseRecyclerAdapter<Posts, PostsViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
+                        @Override
+                        public void onBindViewHolder(@NonNull final PostsViewHolder holder, int position, @NonNull Posts model) {
 
-                holder.image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                            Drawable postBackground = getResources().getDrawable(R.drawable.post_background);
+                            holder.itemView.setBackground(postBackground);
 
-                        Intent profileIntent = new Intent(MainActivity.this,ProfileActivity.class);
-                        profileIntent.putExtra("PostKey", PostKey);
-                        profileIntent.putExtra("CategoryKey", CategoryKey);
-                        startActivity(profileIntent);
+                            final String PostKey = getRef(position).getKey();
+                            final String CategoryKey = record;
 
-                    }
-                });
+                            holder.username.setText(model.getFullname());
+                            Picasso.with(MainActivity.this).load(model.getProfileimage()).placeholder(R.drawable.profile).into(holder.image);
+                            holder.PostTime.setText(model.getTime());
+                            holder.PostDate.setText(model.getDate());
+                            holder.PostDescription.setText(model.getDescription());
+                            Picasso.with(MainActivity.this).load(model.getPostimage()).into(holder.PostImage);
+
+                            holder.SavePost.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+
+                                    int saveColor = getResources().getColor(R.color.colorPrimary);
+
+                                    holder.SavePost.setText("Saved");
+                                    holder.SavePost.setTextColor(saveColor);
+
+                                }
+                            });
+
+                            homeProgressbar.setVisibility(View.INVISIBLE);
+
+                            holder.image.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    Intent profileIntent = new Intent(MainActivity.this,ProfileActivity.class);
+                                    profileIntent.putExtra("PostKey", PostKey);
+                                    profileIntent.putExtra("CategoryKey", CategoryKey);
+                                    startActivity(profileIntent);
+
+                                }
+                            });
+
+
+                        }
+
+                        @NonNull
+                        @Override
+                        public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+
+                            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.all_posts_layout, viewGroup,false);
+                            PostsViewHolder viewHolder = new PostsViewHolder(view);
+                            return viewHolder;
+
+                        }
+                    };
+
+
+                    postList.setAdapter(firebaseRecyclerAdapter);
+                    firebaseRecyclerAdapter.startListening();
+
+                }
+
+
+                else{
+
+                    Message.setVisibility(View.VISIBLE);
+
+                }
 
 
             }
 
-            @NonNull
             @Override
-            public PostsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-
-                View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.all_posts_layout, viewGroup,false);
-                PostsViewHolder viewHolder = new PostsViewHolder(view);
-                return viewHolder;
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        };
+        });
 
 
-        postList.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.startListening();
 
     }
 
@@ -366,13 +396,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void SendUserToPostActivity() {
-
-        Intent postIntent = new Intent(MainActivity.this, PostActivity.class);
-        startActivity(postIntent);
-
-    }
-
 
 
     private void CheckUserExistence() {
@@ -397,6 +420,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void SendUserToPostActivity() {
+
+        Intent postIntent = new Intent(MainActivity.this, PostActivity.class);
+        startActivity(postIntent);
+
+    }
+
+    private void SendToMyPostActivity() {
+
+        Intent myPostIntent = new Intent(MainActivity.this, MyPostActivity.class);
+        startActivity(myPostIntent);
 
     }
 
@@ -488,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.nav_my_post:
-                Toast.makeText(this, "My Posts", Toast.LENGTH_SHORT).show();
+                SendToMyPostActivity();
                 break;
 
             case R.id.nav_saved_post:

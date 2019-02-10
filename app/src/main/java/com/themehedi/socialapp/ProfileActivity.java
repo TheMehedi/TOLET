@@ -115,7 +115,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void ProfileInfo(String uid) {
 
-        UserRef.child(uid).addValueEventListener(new ValueEventListener() {
+        UserRef.child(uid).child("Profile").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

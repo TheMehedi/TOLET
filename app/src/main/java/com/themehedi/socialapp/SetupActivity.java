@@ -70,7 +70,7 @@ public class SetupActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
-        UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID).child("Profile");
         UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
 
@@ -245,6 +245,8 @@ public class SetupActivity extends AppCompatActivity {
 
 
         }
+
+        SendUserToMainActivity();
 
 
     }
